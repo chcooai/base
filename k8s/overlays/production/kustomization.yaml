@@ -4,6 +4,6 @@ resources:
   - ../../base
 images:
   - name: ghcr.io/chcooai/base-api
-    newTag: latest # api
+    newTag: 67556f880ed292712411ba3dc94f8fc114e2bed3 # api
   - name: ghcr.io/chcooai/base-web
-    newTag: latest # web
+    newTag: 67556f880ed292712411ba3dc94f8fc114e2bed3 # web
