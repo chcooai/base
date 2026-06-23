@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES2022", "module": "ESNext", "moduleResolution": "bundler",
     "strict": true, "jsx": "preserve", "skipLibCheck": true,
-    "esModuleInterop": true, "lib": ["ES2022", "DOM", "DOM.Iterable"], "types": ["vitest/globals"]
+    "esModuleInterop": true, "lib": ["ES2022", "DOM", "DOM.Iterable"]
   },
   "include": ["src/**/*.ts", "src/**/*.vue"]
 }
