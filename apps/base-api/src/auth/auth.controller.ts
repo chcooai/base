@@ -1,6 +1,7 @@
 import { Body, Controller, Get, HttpCode, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
+import { Throttle, SkipThrottle } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -22,12 +23,14 @@ export class AuthController {
   }
 
   @Post('register')
+  @Throttle({ default: { ttl: 60000, limit: 5 } })
   register(@Body() dto: RegisterDto) {
     return this.auth.register(dto.email, dto.password);
   }
 
   @Post('login')
   @HttpCode(200)
+  @Throttle({ default: { ttl: 60000, limit: 5 } })
   async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
     const result = await this.auth.login(dto.email, dto.password, dto.redirectUri);
     this.setRefreshCookie(res, result.refreshToken);
@@ -54,6 +57,7 @@ export class AuthController {
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
+  @SkipThrottle()
   me(@CurrentUser() user: { sub: string; email: string }) {
     return user;
   }

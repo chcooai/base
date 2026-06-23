@@ -44,7 +44,10 @@ describe('Auth (e2e)', () => {
     const login = await request(app.getHttpServer()).post('/api/auth/login')
       .send({ email: 'a@b.com', password: 'secret123' }).expect(200);
     expect(login.body.redirectTo).toBe('/welcome');
-    expect(login.headers['set-cookie'][0]).toMatch(/refresh_token=/);
+    const cookie = login.headers['set-cookie'][0];
+    expect(cookie).toMatch(/refresh_token=/);
+    expect(cookie).toMatch(/HttpOnly/i);
+    expect(cookie).toMatch(/Path=\/api\/auth/);
 
     const me = await request(app.getHttpServer()).get('/api/auth/me')
       .set('Authorization', `Bearer ${login.body.accessToken}`).expect(200);

@@ -2,7 +2,7 @@ FROM node:22-alpine AS build
 RUN apk add --no-cache python3 make g++
 WORKDIR /app
 COPY apps/base-api/package.json apps/base-api/package-lock.json* ./apps/base-api/
-RUN cd apps/base-api && npm install
+RUN cd apps/base-api && npm ci
 COPY apps/base-api ./apps/base-api
 RUN cd apps/base-api && npm run build
 
