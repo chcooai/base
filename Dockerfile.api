@@ -10,8 +10,7 @@ FROM node:22-alpine AS run
 WORKDIR /app/apps/base-api
 ENV NODE_ENV=production
 COPY --from=build /app/apps/base-api/package.json ./
-# 只装 prod dependencies（better-sqlite3 是 devDep，不会被安装）
-RUN npm install --omit=dev
+COPY --from=build /app/apps/base-api/node_modules ./node_modules
 COPY --from=build /app/apps/base-api/dist ./dist
 EXPOSE 3000
 CMD ["node", "dist/main"]
