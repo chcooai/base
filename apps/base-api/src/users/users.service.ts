@@ -29,4 +29,9 @@ export class UsersService {
   verifyPassword(user: User, password: string): Promise<boolean> {
     return bcrypt.compare(password, user.passwordHash);
   }
+
+  /** 按主键查用户，不存在返回 null */
+  findById(id: string): Promise<User | null> {
+    return this.repo.findOne({ where: { id } });
+  }
 }
