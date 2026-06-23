@@ -1,0 +1,12 @@
+{
+  "name": "chcooai-base",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "build": "npm --prefix apps/base-api run build && npm --prefix apps/base-web run build",
+    "dev:api": "npm --prefix apps/base-api run start:dev",
+    "dev:web": "npm --prefix apps/base-web run dev",
+    "test": "npm --prefix apps/base-api run test && npm --prefix apps/base-api run test:e2e && npm --prefix apps/base-web run test",
+    "lint": "npm --prefix apps/base-api run lint"
+  }
+}
