@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: base-web
+  namespace: chcooai-prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: base-web
+  template:
+    metadata:
+      labels:
+        app: base-web
+    spec:
+      containers:
+        - name: base-web
+          image: ghcr.io/chcooai/base-web:latest
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: base-web
+  namespace: chcooai-prod
+spec:
+  selector:
+    app: base-web
+  ports:
+    - port: 80
+      targetPort: 80

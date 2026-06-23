@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: base-mysql
+  namespace: chcooai-prod
+spec:
+  serviceName: base-mysql
+  replicas: 1
+  selector:
+    matchLabels:
+      app: base-mysql
+  template:
+    metadata:
+      labels:
+        app: base-mysql
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.4
+          args: ["--default-authentication-plugin=caching_sha2_password"]
+          env:
+            - name: MYSQL_DATABASE
+              value: base
+            - name: MYSQL_USER
+              value: base
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: base-env
+                  key: DB_PASSWORD
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: base-env
+                  key: DB_ROOT_PASSWORD
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: local-path
+        resources:
+          requests:
+            storage: 5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: base-mysql
+  namespace: chcooai-prod
+spec:
+  selector:
+    app: base-mysql
+  ports:
+    - port: 3306
+      targetPort: 3306
