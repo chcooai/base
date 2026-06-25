@@ -57,6 +57,32 @@ describe('api client', () => {
     expect(refresh).not.toHaveBeenCalled();
   });
 
+  it('should_exempt_login_and_register_from_retry_when_response_401', async () => {
+    for (const url of ['/auth/login', '/auth/register']) {
+      const refresh = vi.fn();
+      const retry = vi.fn();
+      const redirect = vi.fn();
+      const handler = makeOnResponseError({ refresh, redirect, retry });
+      const err = { response: { status: 401 }, config: { url, headers: {} } } as any;
+      await expect(handler(err)).rejects.toBe(err);
+      expect(refresh).not.toHaveBeenCalled();
+    }
+  });
+
+  it('should_still_refresh_when_url_merely_contains_auth_refresh_substring', async () => {
+    const refresh = vi.fn().mockResolvedValue('newtok');
+    const retry = vi.fn().mockResolvedValue('ok');
+    const redirect = vi.fn();
+    const handler = makeOnResponseError({ refresh, redirect, retry });
+    const err = { response: { status: 401 }, config: { url: '/auth/refresh-token', headers: {} } } as any;
+    const res = await handler(err);
+    expect(refresh).toHaveBeenCalledTimes(1);
+    expect(retry).toHaveBeenCalledTimes(1);
+    expect(retry.mock.calls[0][0].headers.Authorization).toBe('Bearer newtok');
+    expect(res).toBe('ok');
+    expect(redirect).not.toHaveBeenCalled();
+  });
+
   it('should_not_retry_twice_when_already_retried', async () => {
     const refresh = vi.fn();
     const retry = vi.fn();

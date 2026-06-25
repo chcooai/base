@@ -26,7 +26,7 @@ export function makeOnResponseError(deps: {
     const config = error.config as any;
     const status = error.response?.status;
     const url: string = config?.url ?? '';
-    if (status !== 401 || !config || config._retried || AUTH_FREE.some((p) => url.includes(p))) {
+    if (status !== 401 || !config || config._retried || AUTH_FREE.some((p) => url === p || url.startsWith(p + '?'))) {
       return Promise.reject(error);
     }
     config._retried = true;
