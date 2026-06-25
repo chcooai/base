@@ -15,6 +15,7 @@ export class EnvVars {
   @IsOptional() @IsString() AUTH_COOKIE_SECURE?: string;
   @IsOptional() @IsString() REDIRECT_ALLOWLIST?: string;
   @IsOptional() @IsInt() PORT?: number;
+  @IsOptional() @IsString() ADMIN_BOOTSTRAP_EMAIL?: string;
 }
 
 export function validateEnv(raw: Record<string, unknown>): EnvVars {
