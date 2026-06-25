@@ -34,4 +34,8 @@ export class UsersService {
   findById(id: string): Promise<User | null> {
     return this.repo.findOne({ where: { id } });
   }
+
+  async setRole(id: string, role: 'user' | 'admin'): Promise<void> {
+    await this.repo.update(id, { role });
+  }
 }

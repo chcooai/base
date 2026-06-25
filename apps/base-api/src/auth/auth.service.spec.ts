@@ -3,6 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UnauthorizedException } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from '../users/user.entity';
 import { RefreshToken } from './refresh-token.entity';
 import { UsersService } from '../users/users.service';
@@ -17,6 +19,7 @@ describe('AuthService', () => {
   let moduleRef: TestingModule;
 
   beforeEach(async () => {
+    delete process.env.ADMIN_BOOTSTRAP_EMAIL;
     process.env.JWT_SECRET = 'z'.repeat(32);
     process.env.BCRYPT_ROUNDS = '4';
     process.env.REDIRECT_ALLOWLIST = 'https://app.chcooai.com';
@@ -69,5 +72,32 @@ describe('AuthService', () => {
     const res = await auth.login('a@b.com', 'secret123');
     const refreshed = await auth.refresh(res.refreshToken);
     expect(tokens.verifyAccess(refreshed.accessToken)).toMatchObject({ email: 'a@b.com' });
+  });
+
+  it('should_reject_login_when_status_disabled', async () => {
+    await auth.register('d@b.com', 'secret123');
+    const repo = moduleRef.get<Repository<User>>(getRepositoryToken(User));
+    const u = await repo.findOneOrFail({ where: { email: 'd@b.com' } });
+    u.status = 'disabled';
+    await repo.save(u);
+    await expect(auth.login('d@b.com', 'secret123')).rejects.toThrow(UnauthorizedException);
+  });
+
+  it('should_promote_to_admin_when_email_matches_bootstrap', async () => {
+    process.env.ADMIN_BOOTSTRAP_EMAIL = 'boss@chcooai.com';
+    await auth.register('boss@chcooai.com', 'secret123');
+    await auth.login('boss@chcooai.com', 'secret123');
+    const repo = moduleRef.get<Repository<User>>(getRepositoryToken(User));
+    const u = await repo.findOneOrFail({ where: { email: 'boss@chcooai.com' } });
+    expect(u.role).toBe('admin');
+  });
+
+  it('should_not_promote_when_email_not_bootstrap', async () => {
+    process.env.ADMIN_BOOTSTRAP_EMAIL = 'boss@chcooai.com';
+    await auth.register('other@b.com', 'secret123');
+    await auth.login('other@b.com', 'secret123');
+    const repo = moduleRef.get<Repository<User>>(getRepositoryToken(User));
+    const u = await repo.findOneOrFail({ where: { email: 'other@b.com' } });
+    expect(u.role).toBe('user');
   });
 });
