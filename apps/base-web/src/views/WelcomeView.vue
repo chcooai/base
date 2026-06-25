@@ -66,7 +66,7 @@ async function onSwitch(): Promise<void> {
   justify-content: space-between;
   gap: var(--mu-space-4);
   padding: var(--mu-space-4) var(--mu-space-6);
-  background: rgba(250, 249, 245, 0.85);
+  background: color-mix(in srgb, var(--mu-color-surface-page) 85%, transparent);
   backdrop-filter: saturate(180%) blur(8px);
   border-bottom: 1px solid var(--mu-color-border-subtle);
 }

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import WelcomeView from './WelcomeView.vue';
 
@@ -61,7 +61,7 @@ describe('WelcomeView', () => {
   it('should_logout_and_go_login_when_switch_clicked', async () => {
     const w = mountView();
     await w.find('[data-test="switch"]').trigger('click');
-    await Promise.resolve();
+    await flushPromises();
     expect(logout).toHaveBeenCalledTimes(1);
     expect(push).toHaveBeenCalledWith('/');
   });
