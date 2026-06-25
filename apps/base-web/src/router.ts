@@ -15,13 +15,17 @@ export const router = createRouter({
   ],
 });
 
-router.beforeEach(async (to) => {
-  if (to.name !== 'admin') return true;
-  const auth = useAuthStore();
-  try {
-    const role = await auth.fetchMe();
-    return role === 'admin' ? true : { name: 'welcome' };
-  } catch {
-    return { name: 'login' };
-  }
-});
+const PROTECTED = new Set(['welcome', 'admin']);
+
+export async function authGuard(
+  to: { name?: unknown },
+  auth: { ensureReady: () => Promise<void>; authenticated: boolean; role: 'user' | 'admin' },
+): Promise<true | { name: string }> {
+  if (!PROTECTED.has(to.name as string)) return true;
+  await auth.ensureReady();
+  if (!auth.authenticated) return { name: 'login' };
+  if (to.name === 'admin' && auth.role !== 'admin') return { name: 'welcome' };
+  return true;
+}
+
+router.beforeEach((to) => authGuard(to, useAuthStore()));
