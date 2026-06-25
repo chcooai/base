@@ -41,4 +41,9 @@ describe('UsersService', () => {
   it('should_return_null_when_email_unknown', async () => {
     expect(await service.findByEmail('none@b.com')).toBeNull();
   });
+
+  it('should_default_role_to_user_when_created', async () => {
+    const u = await service.create('a@b.com', 'secret123');
+    expect(u.role).toBe('user');
+  });
 });
