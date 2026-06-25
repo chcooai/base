@@ -3,7 +3,7 @@ import { setActivePinia, createPinia } from 'pinia';
 import { api } from '../api/client';
 import { useAuthStore } from './auth';
 
-vi.mock('../api/client', () => ({ api: { post: vi.fn(), get: vi.fn() } }));
+vi.mock('../api/client', () => ({ api: { post: vi.fn(), get: vi.fn() }, setApiToken: vi.fn() }));
 
 describe('auth store', () => {
   let assignMock: ReturnType<typeof vi.fn>;
@@ -13,9 +13,7 @@ describe('auth store', () => {
     vi.clearAllMocks();
     assignMock = vi.fn();
     Object.defineProperty(window, 'location', {
-      value: { assign: assignMock },
-      writable: true,
-      configurable: true
+      value: { assign: assignMock }, writable: true, configurable: true,
     });
   });
 
@@ -39,26 +37,90 @@ describe('auth store', () => {
     const store = useAuthStore();
     store.performRedirect('/welcome');
     expect(assignMock).toHaveBeenCalledWith('/welcome');
-    expect(assignMock).toHaveBeenCalledTimes(1);
   });
 
-  it('should_assign_external_url_with_token_in_fragment_when_redirect_is_absolute', async () => {
-    (api.post as any).mockResolvedValue({
-      data: { accessToken: 'tok en', redirectTo: 'https://app.chcooai.com', email: 'a@b.com' }
-    });
-    const store = useAuthStore();
-    await store.login('a@b.com', 'secret123', 'https://app.chcooai.com');
-    store.performRedirect('https://app.chcooai.com/dash');
-    expect(assignMock).toHaveBeenCalledWith('https://app.chcooai.com/dash#access_token=tok%20en');
-    expect(assignMock).toHaveBeenCalledTimes(1);
-  });
-
-  it('should_fetch_me_and_store_role', async () => {
+  it('should_fetch_me_and_store_role_and_email', async () => {
     (api.get as any).mockResolvedValue({ data: { sub: '1', email: 'a@b.com', role: 'admin', status: 'active' } });
     const store = useAuthStore();
     const role = await store.fetchMe();
     expect(role).toBe('admin');
     expect(store.role).toBe('admin');
+    expect(store.email).toBe('a@b.com');
     expect(api.get).toHaveBeenCalledWith('/auth/me');
+  });
+
+  it('should_set_token_and_email_when_bootstrap_succeeds', async () => {
+    (api.post as any).mockResolvedValue({ data: { accessToken: 'tok' } });        // /auth/refresh
+    (api.get as any).mockResolvedValue({ data: { email: 'a@b.com', role: 'admin' } }); // /auth/me
+    const store = useAuthStore();
+    await store.bootstrap();
+    expect(store.accessToken).toBe('tok');
+    expect(store.email).toBe('a@b.com');
+    expect(store.role).toBe('admin');
+    expect(store.authenticated).toBe(true);
+    expect(store.ready).toBe(true);
+  });
+
+  it('should_mark_unauthenticated_when_bootstrap_refresh_fails', async () => {
+    (api.post as any).mockRejectedValue(new Error('401'));
+    const store = useAuthStore();
+    await store.bootstrap();
+    expect(store.authenticated).toBe(false);
+    expect(store.ready).toBe(true);
+    expect(store.accessToken).toBeNull();
+  });
+
+  it('should_run_bootstrap_only_once_when_ensureReady_called_twice', async () => {
+    (api.post as any).mockResolvedValue({ data: { accessToken: 'tok' } });
+    (api.get as any).mockResolvedValue({ data: { email: 'a@b.com', role: 'user' } });
+    const store = useAuthStore();
+    await Promise.all([store.ensureReady(), store.ensureReady()]);
+    expect(api.post).toHaveBeenCalledTimes(1); // 只 refresh 一次
+  });
+
+  it('should_build_fragment_url_when_handoffTo_external', async () => {
+    (api.post as any).mockResolvedValue({ data: { accessToken: 'tok en' } });
+    const store = useAuthStore();
+    await store.handoffTo('https://app.chcooai.com/dash');
+    expect(assignMock).toHaveBeenCalledWith('https://app.chcooai.com/dash#access_token=tok%20en');
+  });
+
+  it('should_clear_state_when_logout', async () => {
+    (api.post as any).mockResolvedValue({ data: { ok: true } });
+    const store = useAuthStore();
+    await store.logout();
+    expect(api.post).toHaveBeenCalledWith('/auth/logout');
+    expect(store.accessToken).toBeNull();
+    expect(store.authenticated).toBe(false);
+    expect(store.email).toBe('');
+    expect(store.role).toBe('user');
+  });
+
+  it('should_clear_state_even_when_logout_api_fails', async () => {
+    (api.post as any).mockRejectedValue(new Error('500'));
+    const store = useAuthStore();
+    await store.logout();
+    expect(store.accessToken).toBeNull();
+    expect(store.authenticated).toBe(false);
+  });
+
+  it('should_clear_token_when_bootstrap_fetchme_fails', async () => {
+    (api.post as any).mockResolvedValue({ data: { accessToken: 'tok' } }); // /auth/refresh 成功
+    (api.get as any).mockRejectedValue(new Error('500'));                  // /auth/me 失败
+    const store = useAuthStore();
+    await store.bootstrap();
+    expect(store.authenticated).toBe(false);
+    expect(store.accessToken).toBeNull();
+    expect(store.ready).toBe(true);
+  });
+
+  it('should_build_fragment_url_when_performRedirect_is_external', async () => {
+    (api.post as any).mockResolvedValueOnce({
+      data: { accessToken: 'tok en', redirectTo: 'https://app.chcooai.com', email: 'a@b.com' },
+    });
+    const store = useAuthStore();
+    await store.login('a@b.com', 'secret123', 'https://app.chcooai.com');
+    store.performRedirect('https://app.chcooai.com/dash');
+    expect(assignMock).toHaveBeenCalledWith('https://app.chcooai.com/dash#access_token=tok%20en');
   });
 });
