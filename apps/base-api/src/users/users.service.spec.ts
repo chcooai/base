@@ -41,4 +41,33 @@ describe('UsersService', () => {
   it('should_return_null_when_email_unknown', async () => {
     expect(await service.findByEmail('none@b.com')).toBeNull();
   });
+
+  it('should_default_role_to_user_when_created', async () => {
+    const u = await service.create('a@b.com', 'secret123');
+    expect(u.role).toBe('user');
+  });
+
+  it('should_list_users_with_total_and_email_search', async () => {
+    await service.create('alice@b.com', 'secret123');
+    await service.create('bob@b.com', 'secret123');
+    const all = await service.list(1, 20);
+    expect(all.total).toBe(2);
+    const filtered = await service.list(1, 20, 'alice');
+    expect(filtered.total).toBe(1);
+    expect(filtered.items[0].email).toBe('alice@b.com');
+  });
+
+  it('should_create_by_admin_with_role', async () => {
+    const u = await service.createByAdmin('admin@b.com', 'secret123', 'admin');
+    expect(u.role).toBe('admin');
+  });
+
+  it('should_set_status_and_reset_password', async () => {
+    const u = await service.create('c@b.com', 'secret123');
+    await service.setStatus(u.id, 'disabled');
+    await service.resetPassword(u.id, 'newsecret9');
+    const fresh = await service.findById(u.id);
+    expect(fresh!.status).toBe('disabled');
+    expect(await service.verifyPassword(fresh!, 'newsecret9')).toBe(true);
+  });
 });

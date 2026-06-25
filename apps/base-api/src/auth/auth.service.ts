@@ -28,6 +28,14 @@ export class AuthService {
     if (!user || !(await this.users.verifyPassword(user, password))) {
       throw new UnauthorizedException('邮箱或密码错误');
     }
+    if (user.status === 'disabled') {
+      throw new UnauthorizedException('账户已被禁用');
+    }
+    const bootstrap = (process.env.ADMIN_BOOTSTRAP_EMAIL ?? '').trim().toLowerCase();
+    if (bootstrap && user.email === bootstrap && user.role !== 'admin') {
+      await this.users.setRole(user.id, 'admin');
+      user.role = 'admin';
+    }
     const redirectTo = this.redirect.resolve(redirectUri);
     const pair = await this.tokens.issuePair(user.id, user.email);
     return { ...pair, redirectTo, email: user.email };

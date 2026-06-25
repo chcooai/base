@@ -5,6 +5,7 @@ export interface AppConfig {
   bcryptRounds: number;
   cookie: { secure: boolean; domain?: string };
   redirectAllowlist: string[];
+  adminBootstrapEmail?: string;
 }
 
 export function configuration(): AppConfig {
@@ -32,5 +33,6 @@ export function configuration(): AppConfig {
       .split(',')
       .map((s) => s.trim())
       .filter(Boolean),
+    adminBootstrapEmail: e.ADMIN_BOOTSTRAP_EMAIL,
   };
 }

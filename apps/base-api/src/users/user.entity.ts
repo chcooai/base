@@ -16,6 +16,9 @@ export class User {
   @Column({ type: 'varchar', length: 16, default: 'active' })
   status!: 'active' | 'disabled';
 
+  @Column({ type: 'varchar', length: 16, default: 'user' })
+  role!: 'user' | 'admin';
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;
 
