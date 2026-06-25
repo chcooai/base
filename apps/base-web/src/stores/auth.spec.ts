@@ -3,7 +3,7 @@ import { setActivePinia, createPinia } from 'pinia';
 import { api } from '../api/client';
 import { useAuthStore } from './auth';
 
-vi.mock('../api/client', () => ({ api: { post: vi.fn() } }));
+vi.mock('../api/client', () => ({ api: { post: vi.fn(), get: vi.fn() } }));
 
 describe('auth store', () => {
   let assignMock: ReturnType<typeof vi.fn>;
@@ -51,5 +51,14 @@ describe('auth store', () => {
     store.performRedirect('https://app.chcooai.com/dash');
     expect(assignMock).toHaveBeenCalledWith('https://app.chcooai.com/dash#access_token=tok%20en');
     expect(assignMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('should_fetch_me_and_store_role', async () => {
+    (api.get as any).mockResolvedValue({ data: { sub: '1', email: 'a@b.com', role: 'admin', status: 'active' } });
+    const store = useAuthStore();
+    const role = await store.fetchMe();
+    expect(role).toBe('admin');
+    expect(store.role).toBe('admin');
+    expect(api.get).toHaveBeenCalledWith('/auth/me');
   });
 });

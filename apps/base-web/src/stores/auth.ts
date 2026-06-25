@@ -4,6 +4,7 @@ import { api } from '../api/client';
 
 export const useAuthStore = defineStore('auth', () => {
   const accessToken = ref<string | null>(null);
+  const role = ref<'user' | 'admin'>('user');
 
   async function register(email: string, password: string): Promise<void> {
     await api.post('/auth/register', { email, password });
@@ -15,6 +16,12 @@ export const useAuthStore = defineStore('auth', () => {
     return data.redirectTo as string;
   }
 
+  async function fetchMe(): Promise<'user' | 'admin'> {
+    const { data } = await api.get('/auth/me');
+    role.value = data.role ?? 'user';
+    return role.value;
+  }
+
   function performRedirect(redirectTo: string): void {
     if (redirectTo.startsWith('/')) {
       window.location.assign(redirectTo);
@@ -24,5 +31,5 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  return { accessToken, register, login, performRedirect };
+  return { accessToken, role, register, login, fetchMe, performRedirect };
 });
