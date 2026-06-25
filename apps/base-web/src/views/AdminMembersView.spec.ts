@@ -10,12 +10,21 @@ vi.mock('../stores/admin', () => ({
     total: 1, load, create: vi.fn(), setStatus: vi.fn(), resetPassword: vi.fn(), setRole: vi.fn(),
   }),
 }));
+vi.mock('vue-router', () => ({ useRouter: () => ({ push: vi.fn() }) }));
 
 describe('AdminMembersView', () => {
   beforeEach(() => { setActivePinia(createPinia()); vi.clearAllMocks(); });
 
   it('should_load_members_on_mount', async () => {
-    mount(AdminMembersView, { global: { stubs: { 'el-table': true, 'el-table-column': true, 'el-pagination': true, 'el-input': true, 'el-button': true, 'el-dialog': true } } });
+    mount(AdminMembersView, {
+      global: {
+        directives: { loading: {} },
+        stubs: {
+          'el-table': true, 'el-table-column': true, 'el-pagination': true,
+          'el-input': true, 'el-button': true, 'el-dialog': true, 'el-segmented': true,
+        },
+      },
+    });
     await Promise.resolve();
     expect(load).toHaveBeenCalled();
   });

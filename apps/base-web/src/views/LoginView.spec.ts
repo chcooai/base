@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
+import ElementPlus from 'element-plus';
 import LoginView from './LoginView.vue';
 
 const loginMock = vi.fn();
@@ -14,11 +15,7 @@ describe('LoginView', () => {
   it('should_call_login_and_redirect_on_submit', async () => {
     loginMock.mockResolvedValue('/welcome');
     const wrapper = mount(LoginView, {
-      global: {
-        stubs: {
-          RouterLink: { template: '<a><slot /></a>' }
-        }
-      }
+      global: { plugins: [ElementPlus], stubs: { RouterLink: { template: '<a><slot /></a>' } } },
     });
     await wrapper.find('input[type="email"]').setValue('a@b.com');
     await wrapper.find('input[type="password"]').setValue('secret123');
