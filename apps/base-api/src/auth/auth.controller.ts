@@ -9,10 +9,15 @@ import { RefreshDto } from './dto/refresh.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { CurrentUser } from './current-user.decorator';
 import { REFRESH_COOKIE } from './auth.constants';
+import { UsersService } from '../users/users.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly auth: AuthService, private readonly config: ConfigService) {}
+  constructor(
+    private readonly auth: AuthService,
+    private readonly config: ConfigService,
+    private readonly users: UsersService,
+  ) {}
 
   private setRefreshCookie(res: Response, token: string): void {
     const cookie = this.config.get<{ secure: boolean; domain?: string }>('cookie')!;
@@ -58,7 +63,13 @@ export class AuthController {
   @Get('me')
   @UseGuards(JwtAuthGuard)
   @SkipThrottle()
-  me(@CurrentUser() user: { sub: string; email: string }) {
-    return user;
+  async me(@CurrentUser() user: { sub: string; email: string }) {
+    const u = await this.users.findById(user.sub);
+    return {
+      sub: user.sub,
+      email: user.email,
+      role: u?.role ?? 'user',
+      status: u?.status ?? 'active',
+    };
   }
 }
