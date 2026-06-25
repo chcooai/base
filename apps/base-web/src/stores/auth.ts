@@ -51,6 +51,8 @@ export const useAuthStore = defineStore('auth', () => {
         await fetchMe();
         authenticated.value = true;
       } catch {
+        // fetchMe 失败：清掉已写入的 token，避免「store 说未登录、但 client 仍带 bearer」的不一致
+        setToken(null);
         authenticated.value = false;
       }
     } else {
@@ -75,6 +77,9 @@ export const useAuthStore = defineStore('auth', () => {
     role.value = 'user';
     email.value = '';
     authenticated.value = false;
+    // 重置引导态，允许同一页面生命周期内重新 bootstrap
+    ready.value = false;
+    bootstrapPromise = null;
   }
 
   function performRedirect(redirectTo: string): void {
