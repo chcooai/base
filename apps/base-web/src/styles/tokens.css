@@ -1,0 +1,299 @@
+/**
+ * muoce design tokens — CSS Custom Properties
+ * 源头：E:/muoce/UI/design-tokens.json
+ * 版本：1.2.1 · 2026-05-27（hotfix:删除无条件 44px 全局 min-height,见 CHANGELOG）
+ *
+ * ★ v1.1 视觉气质：『细节控 + 浪漫主义』· 安邸 AD 高端家居杂志风
+ *   - 米白 #FAF7F2 替代冷色 slate-50 作页面底
+ *   - 主色 #0EA5E9 退为小面积技术点缀（图标/链接/边线）
+ *   - 加温中性色系：木色 / 黄铜 / 烟灰 / 深哑光 / 橄榄绿
+ *   - 加 font-serif 衬线字族用于杂志感标题
+ *   - 圆角降一档（更克制）
+ *   - 阴影色由黑改暖灰且更轻
+ *   - 默认页面 padding 16 → 20（留白更慷慨）
+ */
+
+:root {
+  /* ============================== 颜色 - 品牌 ============================== */
+  --mu-color-primary-50:  #F0F9FF;
+  --mu-color-primary-100: #E0F2FE;
+  --mu-color-primary-200: #BAE6FD;
+  --mu-color-primary-300: #7DD3FC;
+  --mu-color-primary-400: #38BDF8;
+  --mu-color-primary-500: #0EA5E9;
+  --mu-color-primary-600: #0284C7;
+  --mu-color-primary-700: #0369A1;
+  --mu-color-primary-800: #075985;
+  --mu-color-primary-900: #0C4A6E;
+
+  --mu-color-accent-400: #FBBF24;
+  --mu-color-accent-500: #F59E0B;  /* ★ 金额 / ROI 高亮 */
+  --mu-color-accent-600: #D97706;
+
+  /* ============================== 颜色 - 温中性（v1.2 校准 Anthropic） ============================== */
+  --mu-color-warm-50:   #FAF9F5;  /* ★ v1.2：纸面白（对齐 Anthropic） */
+  --mu-color-warm-100:  #F2EFE8;  /* 次级底 */
+  --mu-color-warm-200:  #E5E3DC;  /* ★ v1.2：温暖边线 */
+  --mu-color-warm-300:  #D4D1C8;  /* 输入框边线 */
+
+  --mu-color-wood-light:  #E8DCC4; /* 白橡 */
+  --mu-color-wood-medium: #D4A574; /* ★ 原木 */
+  --mu-color-wood-dark:   #8B6B47; /* 胡桃 */
+
+  --mu-color-charcoal:    #6F6E6B; /* ★ v1.2：暖灰棕正文 */
+  --mu-color-deep:        #1F1F1E; /* ★ v1.2：暖近黑标题 */
+  --mu-color-brass:       #B89968; /* 黄铜 */
+  --mu-color-olive:       #708060; /* 橄榄绿 */
+  --mu-color-forest:      #2D4A3E; /* ★ v1.2 新增：深森林绿（极罕用） */
+  --mu-color-blush:       #E8D5C4; /* 腮红米 */
+
+  /* ============================== 颜色 - 中性 Slate（保留作冷色备选） ============================== */
+  --mu-color-slate-50:  #F8FAFC;
+  --mu-color-slate-100: #F1F5F9;
+  --mu-color-slate-200: #E2E8F0;
+  --mu-color-slate-300: #CBD5E1;
+  --mu-color-slate-400: #94A3B8;
+  --mu-color-slate-500: #64748B;
+  --mu-color-slate-600: #475569;
+  --mu-color-slate-700: #334155;
+  --mu-color-slate-800: #1E293B;
+  --mu-color-slate-900: #0F172A;
+
+  /* ============================== 颜色 - 语义 ============================== */
+  --mu-color-success-bg:   #ECFDF5;
+  --mu-color-success-main: #10B981;
+  --mu-color-success-text: #047857;
+
+  --mu-color-warning-bg:   #FFFBEB;
+  --mu-color-warning-main: #F59E0B;
+  --mu-color-warning-text: #B45309;
+
+  --mu-color-danger-bg:   #FEF2F2;
+  --mu-color-danger-main: #EF4444;
+  --mu-color-danger-text: #B91C1C;
+
+  --mu-color-info-bg:   #EFF6FF;
+  --mu-color-info-main: #3B82F6;
+  --mu-color-info-text: #1D4ED8;
+
+  /* ============================== 颜色 - 表面（v1.1 改） ============================== */
+  --mu-color-surface-page:     var(--mu-color-warm-50);    /* ★ 米白底 */
+  --mu-color-surface-page-cool:var(--mu-color-slate-50);   /* 冷色备选（数据看板可选） */
+  --mu-color-surface-card:     #FFFFFF;
+  --mu-color-surface-elevated: #FFFFFF;
+  --mu-color-surface-overlay:  rgba(28, 27, 25, 0.5);
+  --mu-color-surface-inverse:  var(--mu-color-deep);
+
+  /* ============================== 颜色 - 文字（v1.1 改） ============================== */
+  --mu-color-text-primary:   var(--mu-color-deep);         /* ★ 深哑光（替代 slate-900） */
+  --mu-color-text-secondary: var(--mu-color-charcoal);     /* ★ 烟灰（替代 slate-600） */
+  --mu-color-text-tertiary:  var(--mu-color-slate-400);
+  --mu-color-text-disabled:  var(--mu-color-slate-300);
+  --mu-color-text-inverse:   #FFFFFF;
+  --mu-color-text-link:      var(--mu-color-primary-500);
+  --mu-color-text-danger:    var(--mu-color-danger-main);
+  --mu-color-text-success:   var(--mu-color-success-main);
+  --mu-color-text-money:        var(--mu-color-accent-500);
+  --mu-color-text-money-prefix: var(--mu-color-deep);
+
+  /* ============================== 颜色 - 边框（v1.1 改） ============================== */
+  --mu-color-border-subtle:  var(--mu-color-warm-200);     /* ★ 浅卡其 */
+  --mu-color-border-default: var(--mu-color-warm-300);     /* ★ 中卡其 */
+  --mu-color-border-strong:  var(--mu-color-charcoal);
+  --mu-color-border-focus:   var(--mu-color-primary-500);
+
+  /* ============================== 字体 ============================== */
+  --mu-font-sans:  'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mu-font-serif: 'Source Han Serif SC', 'Songti SC', 'STSong', 'Noto Serif SC', 'PingFang SC', serif; /* ★ v1.1：杂志感标题 */
+  --mu-font-mono:  'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+  --mu-font-money: 'DIN Alternate', 'SF Pro Display', 'Noto Sans SC', sans-serif;
+
+  --mu-font-weight-regular:  400;
+  --mu-font-weight-medium:   500;
+  --mu-font-weight-semibold: 600;
+  --mu-font-weight-bold:     700;
+
+  --mu-font-size-xs:        12px;
+  --mu-font-size-sm:        14px;
+  --mu-font-size-base:      16px;
+  --mu-font-size-lg:        18px;
+  --mu-font-size-xl:        20px;
+  --mu-font-size-2xl:       24px;
+  --mu-font-size-3xl:       28px;
+  --mu-font-size-4xl:       36px;
+  --mu-font-size-display:   48px;
+  --mu-font-size-editorial: 64px;  /* ★ v1.1：杂志感巨标题 */
+  --mu-font-size-money-sm:  20px;
+  --mu-font-size-money-md:  32px;
+  --mu-font-size-money-lg:  48px;
+
+  --mu-line-height-tight:   1.15;
+  --mu-line-height-snug:    1.3;
+  --mu-line-height-normal:  1.6;
+  --mu-line-height-relaxed: 1.8;
+
+  /* ============================== 间距 ============================== */
+  --mu-space-0:  0;
+  --mu-space-1:  4px;
+  --mu-space-2:  8px;
+  --mu-space-3:  12px;
+  --mu-space-4:  16px;
+  --mu-space-5:  20px;   /* ★ v1.1：移动页面 padding 默认 */
+  --mu-space-6:  24px;
+  --mu-space-8:  32px;
+  --mu-space-10: 40px;
+  --mu-space-12: 48px;
+  --mu-space-16: 64px;
+  --mu-space-20: 80px;
+  --mu-space-24: 96px;
+
+  /* ============================== 圆角（v1.2 再降一档：书页感） ============================== */
+  --mu-radius-none: 0;
+  --mu-radius-sm:   2px;
+  --mu-radius-md:   4px;    /* ★ v1.2：按钮/输入框（6 → 4，书页感）*/
+  --mu-radius-lg:   6px;    /* ★ v1.2：卡片（8 → 6）*/
+  --mu-radius-xl:   10px;
+  --mu-radius-2xl:  14px;
+  --mu-radius-full: 9999px;
+
+  /* ============================== 阴影（v1.1 暖灰、更轻） ============================== */
+  --mu-shadow-none:        none;
+  --mu-shadow-xs:          0 1px 2px rgba(28, 27, 25, 0.03);
+  --mu-shadow-sm:          0 1px 3px rgba(28, 27, 25, 0.05);
+  --mu-shadow-md:          0 4px 12px rgba(28, 27, 25, 0.06);
+  --mu-shadow-lg:          0 8px 24px rgba(28, 27, 25, 0.09);
+  --mu-shadow-xl:          0 20px 60px rgba(28, 27, 25, 0.16);
+  --mu-shadow-nav-top:     0 -1px 0 rgba(28, 27, 25, 0.06);
+  --mu-shadow-nav-bottom:  0 1px 0 rgba(28, 27, 25, 0.06);
+  --mu-shadow-focus-ring:  0 0 0 3px rgba(14, 165, 233, 0.22);
+  --mu-shadow-magazine:    0 24px 48px -16px rgba(28, 27, 25, 0.12); /* ★ v1.1：杂志感长投影 */
+
+  /* ============================== 触控 ============================== */
+  --mu-touch-min:       44px;
+  --mu-touch-tap-pad:   8px;
+  --mu-touch-list-item: 56px;
+
+  /* ============================== 布局 ============================== */
+  --mu-container-mobile:       100%;
+  --mu-container-pc-sm:        768px;
+  --mu-container-pc-md:        1024px;
+  --mu-container-pc-lg:        1280px;
+  --mu-container-pc-editorial: 880px;  /* ★ v1.1：杂志感行长 */
+
+  --mu-safe-area-top:    env(safe-area-inset-top, 0px);
+  --mu-safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --mu-safe-area-left:   env(safe-area-inset-left, 0px);
+  --mu-safe-area-right:  env(safe-area-inset-right, 0px);
+
+  --mu-nav-top-height:           44px;
+  --mu-nav-bottom-tab-height:    56px;
+  --mu-nav-pc-sidebar-width:     240px;
+  --mu-nav-pc-sidebar-collapsed: 64px;
+  --mu-nav-pc-top-height:        56px;
+
+  /* ============================== 层级 ============================== */
+  --mu-z-base:     0;
+  --mu-z-dropdown: 1000;
+  --mu-z-sticky:   1100;
+  --mu-z-fixed:    1200;
+  --mu-z-drawer:   1300;
+  --mu-z-modal:    1400;
+  --mu-z-popover:  1500;
+  --mu-z-toast:    1600;
+  --mu-z-tooltip:  1700;
+
+  /* ============================== 动效 ============================== */
+  --mu-duration-instant:    100ms;
+  --mu-duration-fast:       150ms;
+  --mu-duration-normal:     200ms;
+  --mu-duration-slow:       300ms;
+  --mu-duration-deliberate: 400ms;
+
+  --mu-ease-linear:   linear;
+  --mu-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --mu-ease-in:       cubic-bezier(0.4, 0, 1, 1);
+  --mu-ease-out:      cubic-bezier(0, 0, 0.2, 1);
+  --mu-ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ============================== 全局基线 ============================== */
+
+html {
+  font-family: var(--mu-font-sans);
+  font-size: var(--mu-font-size-base);
+  line-height: var(--mu-line-height-normal);
+  color: var(--mu-color-text-secondary);
+  background: var(--mu-color-surface-page);
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  padding-bottom: var(--mu-safe-area-bottom);
+}
+
+/* 触控目标 ≥44px 由各仓自行在 @media (max-width: 767px) 段实施,scope 限在
+ * button / a[role="button"] / [role="button"] / input[type="button"|"submit"]。
+ * 此处 *不* 给桌面端 input/select/textarea/<a> 无条件加 min-height,否则
+ * 会撑爆密集表格 / 弹窗里 py-0.5 的小输入框和内联文本链接。
+ * muoce UI 规范的 44px 铁律仅约束「移动端可触发」元素,text input 由
+ * font-size ≥16px (iOS 防缩放) 保证可用性,与高度无关。
+ *
+ * 参考接入示例(money 仓 client/src/index.css):
+ *   @media (max-width: 767px) {
+ *     button:not([aria-hidden="true"]),
+ *     a[role="button"],
+ *     [role="button"],
+ *     input[type="button"],
+ *     input[type="submit"] {
+ *       min-height: 44px;
+ *     }
+ *   }
+ */
+
+/* ============================== 工具类 ============================== */
+
+/* 杂志感标题（v1.1 新增） */
+.mu-editorial {
+  font-family: var(--mu-font-serif);
+  font-weight: var(--mu-font-weight-regular);
+  color: var(--mu-color-text-primary);
+  letter-spacing: -0.01em;
+  line-height: var(--mu-line-height-tight);
+}
+.mu-editorial--lg { font-size: var(--mu-font-size-editorial); }
+.mu-editorial--md { font-size: var(--mu-font-size-display); }
+.mu-editorial--sm { font-size: var(--mu-font-size-4xl); }
+
+/* 金额数字（v1.1 拆出前缀符号） */
+.mu-money {
+  font-family: var(--mu-font-money);
+  font-weight: var(--mu-font-weight-semibold);
+  font-feature-settings: 'tnum' 1;
+  color: var(--mu-color-text-money);
+}
+.mu-money__prefix {
+  color: var(--mu-color-text-money-prefix);
+  font-weight: var(--mu-font-weight-regular);
+  margin-right: 2px;
+}
+.mu-money--accent { color: var(--mu-color-accent-500); }
+
+/* 木色 / 黄铜质感点缀（v1.1 新增，仅在装饰场景用） */
+.mu-bg-warm { background: var(--mu-color-warm-100); }
+.mu-bg-wood { background: var(--mu-color-wood-light); }
+.mu-text-brass  { color: var(--mu-color-brass); }
+.mu-text-olive  { color: var(--mu-color-olive); }
+
+.mu-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mu-line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

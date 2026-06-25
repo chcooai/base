@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2022", "module": "ESNext", "moduleResolution": "bundler",
-    "strict": true, "jsx": "preserve", "skipLibCheck": true,
+    "strict": true, "jsx": "preserve", "skipLibCheck": true, "noEmit": true,
     "esModuleInterop": true, "lib": ["ES2022", "DOM", "DOM.Iterable"]
   },
   "include": ["src/**/*.ts", "src/**/*.vue"]

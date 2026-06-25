@@ -1,0 +1,216 @@
+/**
+ * 启蔻 AI · base-web 主题
+ * 把 muoce v1.2 暖色 token 映射到 Element Plus，并定义认证/后台外壳。
+ * 设计语言：师法 Anthropic/Claude『Considered·Earnest·Quiet』+ 全屋定制温度。
+ * 纸面米白底 · 边线>阴影 · 圆角极小 · 主色仅作"可点击"语义 · 暖色文字 · serif 撑品牌。
+ */
+
+/* ===================== Element Plus 变量覆盖（EL+ 2.x 走 CSS 变量） ===================== */
+:root {
+  /* 主色：仅作可点击/聚焦语义 */
+  --el-color-primary: var(--mu-color-primary-500);
+  --el-color-primary-light-3: var(--mu-color-primary-400);
+  --el-color-primary-light-5: var(--mu-color-primary-300);
+  --el-color-primary-light-7: var(--mu-color-primary-200);
+  --el-color-primary-light-8: var(--mu-color-primary-100);
+  --el-color-primary-light-9: var(--mu-color-primary-50);
+  --el-color-primary-dark-2: var(--mu-color-primary-600);
+
+  --el-color-success: var(--mu-color-success-main);
+  --el-color-warning: var(--mu-color-warning-main);
+  --el-color-danger: var(--mu-color-danger-main);
+  --el-color-error: var(--mu-color-danger-main);
+  --el-color-info: var(--mu-color-info-main);
+
+  /* 表面：纸面米白 + 白卡 */
+  --el-bg-color: var(--mu-color-surface-card);
+  --el-bg-color-page: var(--mu-color-surface-page);
+  --el-bg-color-overlay: var(--mu-color-surface-card);
+  --el-fill-color-blank: var(--mu-color-surface-card);
+  --el-fill-color-light: var(--mu-color-warm-100);
+  --el-fill-color-lighter: var(--mu-color-warm-50);
+
+  /* 文字：暖近黑 + 暖灰棕 */
+  --el-text-color-primary: var(--mu-color-text-primary);
+  --el-text-color-regular: var(--mu-color-text-secondary);
+  --el-text-color-secondary: var(--mu-color-text-tertiary);
+  --el-text-color-placeholder: var(--mu-color-text-tertiary);
+  --el-text-color-disabled: var(--mu-color-text-disabled);
+
+  /* 边线：温暖卡其，替代冷 slate */
+  --el-border-color: var(--mu-color-border-default);
+  --el-border-color-light: var(--mu-color-border-subtle);
+  --el-border-color-lighter: var(--mu-color-warm-100);
+  --el-border-color-extra-light: var(--mu-color-warm-50);
+  --el-border-color-hover: var(--mu-color-wood-medium);
+
+  /* 圆角：书页感（按钮 4 / 卡片 6 / 大 10） */
+  --el-border-radius-base: var(--mu-radius-md);
+  --el-border-radius-small: var(--mu-radius-sm);
+  --el-border-radius-round: var(--mu-radius-lg);
+
+  --el-font-size-base: var(--mu-font-size-base);
+  --el-font-family: var(--mu-font-sans);
+}
+
+/* ===================== 全局基线 ===================== */
+#app {
+  min-height: 100dvh;
+  background: var(--mu-color-surface-page);
+  color: var(--mu-color-text-secondary);
+  font-family: var(--mu-font-sans);
+}
+
+/* 触控：移动端可点击元素 ≥44px（不撑爆桌面密集表格） */
+@media (max-width: 767px) {
+  .el-button:not(.is-text),
+  button:not([aria-hidden='true']),
+  a[role='button'] {
+    min-height: var(--mu-touch-min);
+  }
+}
+
+.el-button { font-weight: var(--mu-font-weight-medium); }
+.el-button--primary { font-weight: var(--mu-font-weight-semibold); }
+.el-input__wrapper { padding: 1px 14px; }
+
+/* ===================== 品牌字标 ===================== */
+.qk-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mu-font-serif);
+  color: var(--mu-color-text-primary);
+  letter-spacing: -0.01em;
+}
+.qk-brand__name { font-size: var(--mu-font-size-3xl); font-weight: var(--mu-font-weight-medium); }
+.qk-brand__ai {
+  font-family: var(--mu-font-sans);
+  font-size: var(--mu-font-size-sm);
+  font-weight: var(--mu-font-weight-semibold);
+  letter-spacing: 0.08em;
+  color: var(--mu-color-primary-500);
+  transform: translateY(-2px);
+}
+
+/* ===================== 认证页外壳 ===================== */
+.qk-auth {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: var(--mu-space-6) var(--mu-space-5);
+  padding-top: max(var(--mu-space-6), var(--mu-safe-area-top));
+  background:
+    radial-gradient(60% 50% at 50% 0%, var(--mu-color-warm-100) 0%, transparent 70%),
+    var(--mu-color-surface-page);
+}
+.qk-auth__card {
+  width: 100%;
+  max-width: 400px;
+  background: var(--mu-color-surface-card);
+  border: 1px solid var(--mu-color-border-subtle);
+  border-radius: var(--mu-radius-xl);
+  padding: var(--mu-space-10) var(--mu-space-8) var(--mu-space-8);
+}
+/* 卡顶一抹原木装饰线（一屏装饰 ≤3 处） */
+.qk-auth__card::before {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 3px;
+  border-radius: var(--mu-radius-full);
+  background: linear-gradient(90deg, var(--mu-color-wood-medium), var(--mu-color-brass));
+  margin-bottom: var(--mu-space-6);
+}
+.qk-auth__title {
+  font-family: var(--mu-font-serif);
+  font-size: var(--mu-font-size-2xl);
+  font-weight: var(--mu-font-weight-regular);
+  color: var(--mu-color-text-primary);
+  line-height: var(--mu-line-height-snug);
+  margin: var(--mu-space-5) 0 var(--mu-space-2);
+}
+.qk-auth__sub {
+  font-size: var(--mu-font-size-sm);
+  color: var(--mu-color-text-secondary);
+  margin: 0 0 var(--mu-space-8);
+}
+.qk-field { margin-bottom: var(--mu-space-4); }
+.qk-field > label {
+  display: block;
+  font-size: var(--mu-font-size-sm);
+  font-weight: var(--mu-font-weight-medium);
+  color: var(--mu-color-text-primary);
+  margin-bottom: var(--mu-space-2);
+}
+.qk-auth__submit { width: 100%; margin-top: var(--mu-space-2); }
+.qk-auth__foot {
+  margin: var(--mu-space-6) 0 0;
+  text-align: center;
+  font-size: var(--mu-font-size-sm);
+  color: var(--mu-color-text-secondary);
+}
+.qk-auth__foot a { color: var(--mu-color-text-link); text-decoration: none; }
+.qk-auth__foot a:hover { text-decoration: underline; }
+
+/* ===================== 后台外壳 ===================== */
+.qk-admin { min-height: 100dvh; background: var(--mu-color-surface-page); }
+.qk-admin__bar {
+  position: sticky;
+  top: 0;
+  z-index: var(--mu-z-sticky);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mu-space-4);
+  padding: var(--mu-space-4) var(--mu-space-6);
+  background: rgba(250, 249, 245, 0.85);
+  backdrop-filter: saturate(180%) blur(8px);
+  border-bottom: 1px solid var(--mu-color-border-subtle);
+}
+.qk-admin__bar .qk-brand__name { font-size: var(--mu-font-size-xl); }
+.qk-admin__main {
+  max-width: var(--mu-container-pc-lg);
+  margin: 0 auto;
+  padding: var(--mu-space-8) var(--mu-space-6) var(--mu-space-16);
+}
+.qk-admin__head { margin-bottom: var(--mu-space-6); }
+.qk-admin__h1 {
+  font-family: var(--mu-font-serif);
+  font-size: var(--mu-font-size-3xl);
+  font-weight: var(--mu-font-weight-regular);
+  color: var(--mu-color-text-primary);
+  margin: 0 0 var(--mu-space-1);
+}
+.qk-admin__lead { font-size: var(--mu-font-size-sm); color: var(--mu-color-text-secondary); margin: 0; }
+.qk-card {
+  background: var(--mu-color-surface-card);
+  border: 1px solid var(--mu-color-border-subtle);
+  border-radius: var(--mu-radius-lg);
+  padding: var(--mu-space-5);
+}
+.qk-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mu-space-3);
+  align-items: center;
+  margin-bottom: var(--mu-space-5);
+}
+.qk-toolbar__spacer { flex: 1; }
+.qk-pager { display: flex; justify-content: flex-end; margin-top: var(--mu-space-5); }
+
+/* 角色/状态轻量徽标 */
+.qk-tag {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 var(--mu-space-2);
+  border-radius: var(--mu-radius-full);
+  font-size: var(--mu-font-size-xs);
+  font-weight: var(--mu-font-weight-medium);
+  border: 1px solid transparent;
+}
+.qk-tag--admin { color: var(--mu-color-brass); background: var(--mu-color-warm-100); border-color: var(--mu-color-warm-200); }
+.qk-tag--user  { color: var(--mu-color-text-secondary); background: var(--mu-color-warm-50); border-color: var(--mu-color-warm-200); }
+.qk-tag--active   { color: var(--mu-color-success-text); background: var(--mu-color-success-bg); }
+.qk-tag--disabled { color: var(--mu-color-text-tertiary); background: var(--mu-color-warm-100); }
