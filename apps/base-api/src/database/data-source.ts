@@ -3,6 +3,7 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import { User } from '../users/user.entity';
 import { RefreshToken } from '../auth/refresh-token.entity';
 import { InitSchema1750000000000 } from './migrations/1750000000000-init';
+import { AddUserRole1763200000000 } from './migrations/1763200000000-add-user-role';
 
 /**
  * 当 NODE_ENV=test 时使用 sqlite in-memory，避免 CI 环境无 MySQL 时 e2e 挂起。
@@ -25,7 +26,7 @@ export function buildDataSourceOptions(): DataSourceOptions {
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     entities: [User, RefreshToken],
-    migrations: [InitSchema1750000000000],
+    migrations: [InitSchema1750000000000, AddUserRole1763200000000],
     synchronize: false,
   };
 }
